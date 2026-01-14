@@ -28,6 +28,17 @@ async function bootstrap() {
 
   io.on("connection", (socket) => {
     console.log(`👤 Cliente conectado: ${socket.id}`);
+
+    socket.on("disconnect", () => {
+      console.log(`❌ Cliente desconectado: ${socket.id}`);
+    });
+
+    socket.on("create_room", async (data) => {
+      console.log(`🆕 Criando sala para jogador: ${data.playerName}`);
+      // Lógica para criar sala e adicionar jogador
+      // ...
+    });
+
   });
 
   httpServer.listen(PORT, () => {

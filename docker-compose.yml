@@ -3,15 +3,22 @@ name: jdi
 services:
   backend:
     build:
-      context: ./backend
+      context: .
       target: dev
+      dockerfile: backend/Dockerfile
     ports:
       - "${BACKEND_PORT}:3000"
     env_file:
       - .env
     volumes:
-      - ./backend:/app
-      - /app/node_modules
+      - ./backend:/usr/src/app/backend
+      
+      - ./packages:/usr/src/app/packages
+
+      # --- PROTEÇÃO DE DEPENDÊNCIAS (Volumes Anônimos) ---
+      - /usr/src/app/node_modules             
+      - /usr/src/app/backend/node_modules      
+      - /usr/src/app/packages/shared/node_modules 
     depends_on:
       redis:
         condition: service_healthy
@@ -20,8 +27,9 @@ services:
 
   frontend:
     build:
-      context: ./frontend
+      context: .
       target: dev
+      dockerfile: frontend/Dockerfile
     ports:
       - "${FRONTEND_PORT}:5173"
     env_file:
@@ -29,8 +37,11 @@ services:
     environment:
       - VITE_BACKEND_URL=${VITE_BACKEND_URL}
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - ./frontend:/usr/src/app/frontend
+      - ./packages:/usr/src/app/packages
+
+      - /usr/src/app/node_modules
+      - /usr/src/app/frontend/node_modules
     depends_on:
       - backend
     networks:

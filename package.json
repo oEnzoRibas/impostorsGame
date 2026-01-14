@@ -1,0 +1,27 @@
+{
+  "name": "jogo-do-impostor-root",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend",
+    "packages/shared"
+  ],
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oEnzoRibas/jogoDoImpostor.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/oEnzoRibas/jogoDoImpostor/issues"
+  },
+  "homepage": "https://github.com/oEnzoRibas/jogoDoImpostor#readme"
+}
