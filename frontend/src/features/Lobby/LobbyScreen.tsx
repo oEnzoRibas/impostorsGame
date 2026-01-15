@@ -1,21 +1,34 @@
 import { useState } from "react";
-import { useGame } from "../../context/GameContext";
+import { useGame } from "../../context/GameContext"; // Ajuste o import conforme sua pasta
 
 const LobbyScreen = () => {
-  const { createRoom } = useGame();
+  const { createRoom, joinRoom } = useGame();
 
   const [nickname, setNickname] = useState("");
+  const [roomIdInput, setRoomIdInput] = useState("");
 
   const handleCreateRoom = () => {
     if (nickname.trim() !== "") {
       createRoom(nickname);
     } else {
-      alert("Please enter a nickname");
+      alert("Por favor, digite um nickname!");
     }
   };
 
+  const handleJoinRoom = () => {
+    if (nickname.trim() === "") {
+      alert("Por favor, digite um nickname!");
+      return;
+    }
+    if (roomIdInput.trim() === "") {
+      alert("Por favor, digite o ID da sala!");
+      return;
+    }
+    joinRoom(roomIdInput.toUpperCase(), nickname);
+  };
+
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
+    <div style={{ textAlign: "center", marginTop: "50px", color: "white" }}>
       <h1>Bem-vindo ao Impostor Game 🕵️</h1>
 
       <div
@@ -37,12 +50,31 @@ const LobbyScreen = () => {
 
         <button
           onClick={handleCreateRoom}
-          style={{ padding: "10px", cursor: "pointer" }}
+          style={{ padding: "10px", cursor: "pointer", fontWeight: "bold" }}
         >
-          Criar Sala
+          Criar Nova Sala
         </button>
 
-        {/* Futuramente aqui entra o botão "Entrar em Sala" */}
+        <hr style={{ width: "100%", margin: "20px 0", borderColor: "#444" }} />
+
+        <input
+          type="text"
+          placeholder="ID da Sala (ex: XJ92)"
+          value={roomIdInput}
+          onChange={(e) => setRoomIdInput(e.target.value)}
+          style={{
+            padding: "10px",
+            fontSize: "16px",
+            textTransform: "uppercase",
+          }}
+        />
+
+        <button
+          onClick={handleJoinRoom}
+          style={{ padding: "10px", cursor: "pointer", fontWeight: "bold" }}
+        >
+          Entrar na Sala
+        </button>
       </div>
     </div>
   );

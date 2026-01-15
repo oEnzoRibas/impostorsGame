@@ -19,3 +19,14 @@ export interface Room {
   players: Player[];
   gameState: GameState;
 }
+
+export interface GameSettings {
+  theme: string;
+  roundTime: number;
+}
+
+export interface GameResults {
+  winner: "IMPOSTOR" | "CREWMATES";
+  impostorId: string;
+  votes: Record<string, string>; // playerId -> votedPlayerId
+}

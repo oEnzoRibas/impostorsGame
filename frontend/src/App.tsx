@@ -8,6 +8,7 @@ import NotFound from "./features/Errors/NotFound";
 import WaitingRoomScreen from "./features/WaitingRoom/WaitingRoomScreen";
 import GameScreen from "./features/Game/GameScreen";
 import ResultsScreen from "./features/Results/ResultsScreen";
+import { Toaster } from "react-hot-toast";
 
 const socket = io(import.meta.env.VITE_BACKEND_URL, {
   autoConnect: false,
@@ -42,6 +43,7 @@ function GameManager() {
 export default function App() {
   return (
     <GameProvider>
+      <Toaster position="top-center" />
       <GameManager />
     </GameProvider>
   );
