@@ -6,12 +6,15 @@ import { getAvailableThemes } from "@jdi/shared/src/themes";
 import { ThemeUploader } from "./components/ThemeUploader";
 import { useCopyToClipboard } from "../../hooks/useCopyToClipboard";
 import { useSocketEvent } from "../../hooks/useSocketEvent";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
 
 // Temas Padrão
 const AVAILABLE_THEMES = getAvailableThemes();
 
 const WaitingRoomScreen = () => {
   const { room, me, startGame, leaveRoom, gameState } = useGame();
+
+  if (!room || !me) return <div>Carregando...</div>;
 
   // STATES
   const [availableThemes, setAvailableThemes] =
@@ -21,8 +24,19 @@ const WaitingRoomScreen = () => {
 
   // EFFECTS
   useSocketEvent<string[]>("themes_updated", (newThemes) => {
-    setAvailableThemes((prev) => [...prev, ...newThemes]);
-    toast.success("Novos temas!");
+    console.log("📡 [Socket] themes_updated:", newThemes);
+
+    if (!Array.isArray(newThemes)) return;
+
+    const uniqueThemes = Array.from(
+      new Set([...AVAILABLE_THEMES, ...newThemes]),
+    );
+
+    setAvailableThemes(uniqueThemes);
+
+    if (newThemes.length > 0) {
+      setSelectedTheme(newThemes[newThemes.length - 1]);
+    }
   });
 
   const handleStartGame = () => {
@@ -32,8 +46,6 @@ const WaitingRoomScreen = () => {
     }
     startGame(selectedTheme);
   };
-
-  if (!room || !me) return <div>Carregando...</div>;
 
   const copyToClipboard = useCopyToClipboard();
 
