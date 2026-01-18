@@ -4,7 +4,6 @@ import { GameProvider, useGame } from "./context/GameContext";
 
 // Imports das telas
 import LobbyScreen from "./features/Lobby/LobbyScreen";
-import NotFound from "./features/Errors/NotFound";
 import WaitingRoomScreen from "./features/WaitingRoom/WaitingRoomScreen";
 import GameScreen from "./features/Game/GameScreen";
 import ResultsScreen from "./features/Results/ResultsScreen";
