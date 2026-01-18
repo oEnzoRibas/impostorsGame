@@ -105,7 +105,13 @@ export const GameService = {
 
     const impostor = room.players.find((p) => p.isImpostor);
 
-    const crewmatesWon = mostVotedId === impostor?.id;
+    let crewmatesWon = mostVotedId === impostor?.id;
+
+    if (
+      Object.values(voteCounts).filter((count) => count === maxVotes).length > 1
+    ) {
+      crewmatesWon = false;
+    }
 
     room.gameResults = {
       winner: crewmatesWon ? "CREWMATES" : "IMPOSTOR",
