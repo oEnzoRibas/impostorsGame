@@ -1,0 +1,33 @@
+name: jdi-prod
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    ports:
+      - "3002:3002"
+    env_file:
+      - .env_prod
+    environment:
+      # Importante: Como é produção local, o Redis está na rede docker
+      - REDIS_URL=redis://redis:${REDIS_PORT}
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - app-net
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    driver: bridge

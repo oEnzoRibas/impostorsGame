@@ -1,0 +1,42 @@
+# Usamos a mesma base que você já confia
+FROM node:24-slim AS base
+WORKDIR /usr/src/app
+
+# Copia os package.json de TODO o monorepo (igual você fez)
+COPY package.json package-lock.json* ./
+COPY frontend/package.json frontend/
+COPY backend/package.json backend/
+COPY packages/shared/package.json packages/shared/
+
+# Instala todas as dependências na raiz (o NPM lida com o workspace)
+RUN npm install
+
+# --- ESTÁGIO DE BUILD DO FRONTEND ---
+FROM base AS build-front
+# Copia o código fonte (Front e Shared)
+COPY packages/shared packages/shared
+COPY frontend frontend
+
+WORKDIR /usr/src/app/frontend
+# Gera a pasta 'dist' (Aqui usamos a correção do Passo 1)
+RUN npm run build
+
+# --- ESTÁGIO FINAL (BACKEND + FRONTEND) ---
+FROM base AS prod
+ENV NODE_ENV=development 
+# (Mantive development para você poder usar ts-node/npm run dev sem configurar build do backend agora)
+
+# Copia código do Back e Shared
+COPY packages/shared packages/shared
+COPY backend backend
+
+# A MÁGICA: Pega o build do estágio anterior e coloca no Backend
+WORKDIR /usr/src/app/backend
+# Cria a pasta public e copia o dist do front pra dentro dela
+COPY --from=build-front /usr/src/app/frontend/dist ./public
+
+# Expõe a porta do backend
+EXPOSE 3002
+
+# Roda o backend (usando o script dev que você já usa)
+CMD ["npm", "run", "dev"]

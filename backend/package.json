@@ -19,12 +19,14 @@
     "start": "node dist/server.js"
   },
   "dependencies": {
+    "@jdi/shared": "1.0.0",
     "dotenv": "^17.2.3",
+    "express": "^5.2.1",
     "redis": "^5.10.0",
-    "socket.io": "^4.8.3",
-    "@jdi/shared": "1.0.0"
+    "socket.io": "^4.8.3"
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
     "@types/node": "^25.0.8",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
