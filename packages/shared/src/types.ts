@@ -20,11 +20,14 @@ export interface Player {
 export interface Room {
   id: string;
   players: Player[];
+
   gameState: GameState;
   customThemes: string[];
+
+  turnPlayerId?: string;
   currentRound: number;
   maxRounds: number;
-  turnPlayerId?: string;
+
   gameResults?: GameResults;
   votes?: Record<string, string>; // playerId -> votedPlayerId
 }

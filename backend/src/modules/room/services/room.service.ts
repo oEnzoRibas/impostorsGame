@@ -2,16 +2,9 @@ import { randomUUID } from "crypto";
 import { redisClient } from "../../../config/redis.js";
 import { Room, Player, GameState } from "@jdi/shared";
 import { getRandomWord, THEMES } from "@jdi/shared/src/themes.js";
-import { DEFAULT_MAX_ROUNDS } from "@jdi/shared/src/constants.js";
+import { DEFAULT_MAX_ROUNDS, KEY_CUSTOM_THEMES, KEY_PLAYER_ROOM, KEY_ROOM, PLAYER_TTL, ROOM_TTL } from "@jdi/shared/src/constants.js";
 import { lstat } from "fs";
 import { callbackify } from "util";
-
-const ROOM_TTL = 60 * 60 * 2;
-const PLAYER_TTL = 60 * 60 * 24;
-
-const KEY_ROOM = "room:";
-const KEY_PLAYER_ROOM = "player_room:";
-const KEY_CUSTOM_THEMES = "custom_themes:";
 
 
 interface RoomInternal extends Room {
@@ -27,7 +20,7 @@ export const RoomService = {
     return roomId;
   },
 
-  async create(hostId: string, playerName: string): Promise<Room> {
+  async createRoom(hostId: string, playerName: string): Promise<Room> {
     const roomId = randomUUID().slice(0, 4).toUpperCase();
 
     const hostPlayer: Player = {
@@ -56,7 +49,7 @@ export const RoomService = {
     return newRoom;
   },
 
-  async join(
+  async joinRoom(
     roomId: string,
     playerId: string,
     playerName: string,
@@ -97,7 +90,7 @@ export const RoomService = {
     return room;
   },
 
-  async resetGame(roomId: string): Promise<Room> {
+  async resetRoom(roomId: string): Promise<Room> {
     const roomJson = await redisClient.get(`${KEY_ROOM}${roomId}`);
 
     if (!roomJson) {
@@ -123,7 +116,7 @@ export const RoomService = {
     return room;
   },
 
-  async get(roomId: string): Promise<Room | null> {
+  async getRoom(roomId: string): Promise<Room | null> {
     const roomJson = await redisClient.get(`${KEY_ROOM}${roomId}`);
 
     if (!roomJson) {
@@ -133,157 +126,75 @@ export const RoomService = {
     return room;
   },
 
-  async leave(playerId: string): Promise<Room | null> {
-    const roomId = await redisClient.get(`${KEY_PLAYER_ROOM}${playerId}`);
-
+  async leaveRoom(socketId: string): Promise<Room | null> {
+    // 1. Acha a sala
+    const roomId = await this.getRoomIdByPlayer(socketId);
     if (!roomId) return null;
 
-    const roomJson = await redisClient.get(`${KEY_ROOM}${roomId}`);
+    const roomStr = await redisClient.get(`${KEY_ROOM}${roomId}`);
+    if (!roomStr) return null;
+    const room: Room = JSON.parse(roomStr);
 
-    if (!roomJson) {
-      await redisClient.del(`${KEY_PLAYER_ROOM}${playerId}`);
-      return null;
-    }
-
-    const room: Room = JSON.parse(roomJson);
-
-    const playerIndex = room.players.findIndex((p) => p.id === playerId);
-    if (playerIndex === -1) {
-      await redisClient.del(`${KEY_PLAYER_ROOM}${playerId}`);
-      return room;
-    }
+    // 2. Acha o jogador
+    const playerIndex = room.players.findIndex((p) => p.id === socketId);
+    if (playerIndex === -1) return null;
 
     const playerToRemove = room.players[playerIndex];
+    const wasItHisTurn = room.turnPlayerId === socketId;
+
+    // 3. REMOVE o jogador e limpa referência
     room.players.splice(playerIndex, 1);
+    await redisClient.del(`${KEY_PLAYER_ROOM}${socketId}`);
 
-    await redisClient.del(`${KEY_PLAYER_ROOM}${playerId}`);
+    // --- LÓGICA DE NEGÓCIO CENTRALIZADA ---
 
+    // A: Sala ficou vazia? Deleta.
     if (room.players.length === 0) {
       await redisClient.del(`${KEY_ROOM}${roomId}`);
-      await redisClient.del(`${KEY_CUSTOM_THEMES}${roomId}`);
+      // Limpa custom themes se quiser
       return null;
     }
 
+    // B: Host saiu? Passa a coroa.
     if (playerToRemove.isHost) {
       room.players[0].isHost = true;
     }
 
-    await redisClient.set(`${KEY_ROOM}${roomId}`, JSON.stringify(room), {
-      EX: ROOM_TTL,
-    });
+    // C: Jogo estava rolando?
+    if (room.gameState === "PLAYING") {
+      // C1: Poucos jogadores -> Encerra
+      if (room.players.length < 2) {
+        room.gameState = "LOBBY";
+        room.turnPlayerId = "";
+        room.gameResults = undefined;
+        room.currentRound = 0;
+      }
+      // C2: Era a vez de quem saiu? -> Passa a vez
+      else if (wasItHisTurn) {
+        // Como o array encolheu, o "próximo" é o índice atual.
+        // Se estourar o array, volta pro 0.
+        let nextIndex = playerIndex;
+        if (nextIndex >= room.players.length) {
+          nextIndex = 0;
+        }
+        room.turnPlayerId = room.players[nextIndex].id;
+      }
+      // C3: Não era a vez dele? Não faz nada, o jogo segue.
+    }
 
+    // 4. Salva no Redis
+    await this.saveRoom(room);
     return room;
   },
 
-  async delete(roomId: string): Promise<void> {
+  async deleteRoom(roomId: string): Promise<void> {
     await redisClient.del(`${KEY_ROOM}${roomId}`);
-  },
-
-  async startGame(
-    roomId: string,
-    themeName: string,
-    maxRounds: number,
-  ): Promise<any> {
-    const roomJson = await redisClient.get(`${KEY_ROOM}${roomId}`);
-
-    if (!roomJson) {
-      throw new Error("Room not found");
-    }
-
-    const room: Room = JSON.parse(roomJson);
-
-    let theme = THEMES[themeName];
-
-    if (!theme) {
-      const customJson = await redisClient.get(`${KEY_CUSTOM_THEMES}${roomId}`);
-
-      if (customJson) {
-        const customThemes = JSON.parse(customJson);
-        theme = customThemes[themeName];
-      }
-    }
-
-    if (!theme || theme.length === 0) {
-      throw new Error("Theme not found or has no words");
-    }
-
-    const secretWord = theme[Math.floor(Math.random() * theme.length)];
-
-    const impostorIndex = Math.floor(Math.random() * room.players.length);
-    const impostorId = room.players[impostorIndex].id;
-
-    room.players = room.players.map((p, index) => ({
-      ...p,
-      isImpostor: index === impostorIndex,
-    }));
-
-    room.gameState = "PLAYING";
-    room.currentRound = 1;
-    room.maxRounds = maxRounds;
-
-    const starterIndex = Math.floor(Math.random() * room.players.length);
-
-    room.turnPlayerId = room.players[starterIndex].id;
-
-    room.players.forEach((p) => {
-      p.lastWord = undefined;
-      p.wordsList = [];
-    });
-
-    await this.saveRoom(room);
-
-    return { room, secretWord, impostorId };
   },
 
   async saveRoom(room: Room): Promise<void> {
     await redisClient.set(`${KEY_ROOM}${room.id}`, JSON.stringify(room), {
       EX: ROOM_TTL,
     });
-  },
-
-  async submitWord(
-    roomId: string,
-    playerId: string,
-    word: string,
-  ): Promise<Room> {
-    const room = await this.get(roomId);
-    if (!room) {
-      throw new Error("Room not found");
-    }
-
-    if (room.turnPlayerId !== playerId) {
-      throw new Error("It's not this your turn");
-    }
-
-    const playersIndex = room.players.findIndex((p) => p.id === playerId);
-    const player = room.players[playersIndex];
-
-    player.lastWord = word.trim();
-    player.wordsList = player.wordsList || [];
-    player.wordsList.push(word.trim());
-
-    let nextIndex = playersIndex + 1;
-    if (nextIndex >= room.players.length) {
-      nextIndex = 0;
-    }
-
-    if (
-      room.players.every(
-        (p) => p.wordsList && p.wordsList.length == room.currentRound,
-      )
-    ) {
-      room.currentRound += 1;
-    }
-
-    if (room.currentRound > room.maxRounds) {
-      room.gameState = "VOTING";
-      room.turnPlayerId = undefined;
-    } else {
-      room.turnPlayerId = room.players[nextIndex].id;
-    }
-
-    await this.saveRoom(room);
-    return room;
   },
 
   async addCustomThemes(
@@ -337,61 +248,5 @@ export const RoomService = {
     );
 
     return Object.keys(updatedThemes);
-  },
-
-  async vote(roomId: string, voterId: string, targetId: string): Promise<Room> {
-    console.log("Calculating vote...", { roomId, voterId, targetId });
-
-    const room = await this.get(roomId);
-    if (!room) throw new Error("Sala não encontrada");
-    if (room.gameState !== "VOTING") throw new Error("Não é hora de votar!");
-
-    room.votes = room.votes || {};
-    room.votes[voterId] = targetId;
-
-    const player = room.players.find((p) => p.id === voterId);
-    if (player) player.hasVoted = true;
-
-    const totalVotes = Object.keys(room.votes).length;
-    const totalPlayers = room.players.length;
-
-    if (totalVotes === totalPlayers) {
-      return this.calculateResults(room);
-    }
-
-    await this.saveRoom(room);
-    return room;
-  },
-
-  async calculateResults(room: Room): Promise<Room> {
-    room.gameState = "RESULTS";
-
-    const voteCounts: Record<string, number> = {};
-    Object.values(room.votes || {}).forEach((targetId) => {
-      voteCounts[targetId] = (voteCounts[targetId] || 0) + 1;
-    });
-
-    let mostVotedId = "";
-    let maxVotes = -1;
-
-    Object.entries(voteCounts).forEach(([id, count]) => {
-      if (count > maxVotes) {
-        maxVotes = count;
-        mostVotedId = id;
-      }
-    });
-
-    const impostor = room.players.find((p) => p.isImpostor);
-
-    const crewmatesWon = mostVotedId === impostor?.id;
-
-    room.gameResults = {
-      winner: crewmatesWon ? "CREWMATES" : "IMPOSTOR",
-      impostorId: impostor?.id || "",
-      votes: room.votes || {},
-    };
-
-    await this.saveRoom(room);
-    return room;
   },
 };

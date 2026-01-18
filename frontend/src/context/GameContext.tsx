@@ -141,7 +141,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   };
 
   const resetGame = () => {
-    socketService.socket?.emit("reset_game");
+    socketService.socket?.emit("reset_room");
   };
 
   return (
