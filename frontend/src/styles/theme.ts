@@ -1,15 +1,16 @@
 export const theme = {
   colors: {
     background: "#121212", // Fundo geral (quase preto)
-    surface: "#1e1e1e",    // Cartões e modais
-    primary: "#22c55e",    // Verde (Ações positivas, Inocentes)
-    secondary: "#ef4444",  // Vermelho (Impostor, Perigo, Votar)
-    accent: "#fbbf24",     // Amarelo (Turno atual, Destaque)
+    surface: "#1e1e1e", // Cartões e modais
+    primary: "#22c55e", // Verde (Ações positivas, Inocentes)
+    secondary: "#ef4444", // Vermelho (Impostor, Perigo, Votar)
+    accent: "#fbbf24", // Amarelo (Turno atual, Destaque)
     text: {
       primary: "#ffffff",
       secondary: "#a1a1aa",
       disabled: "#52525b",
     },
+    link: "#82ff1b",
     border: "#3f3f46",
   },
   spacing: {
@@ -34,5 +35,5 @@ export const theme = {
   shadows: {
     card: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
     glow: "0 0 15px",
-  }
+  },
 };

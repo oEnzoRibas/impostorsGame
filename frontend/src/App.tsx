@@ -33,16 +33,22 @@ function GameFlowManager() {
 
   switch (gameState) {
     case "HOME":
+      document.title = "Impostors Game!";
       return <HomeScreen />;
     case "LOBBY":
+      document.title = "Lobby - Impostors Game!";
       return <LobbyScreen />;
     case "PLAYING":
+      document.title = "Playing - Impostors Game!";
       return <GameScreen />;
     case "VOTING":
+      document.title = "Voting - Impostors Game!";
       return <VotingScreen />;
     case "RESULTS":
+      document.title = "Results - Impostors Game!";
       return <ResultsScreen />;
     default:
+      document.title = "Something Unexpected - Impostors Game!";
       return <SomeThingUnexpected />;
   }
 }

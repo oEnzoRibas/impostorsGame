@@ -20,7 +20,12 @@ const GameScreen = () => {
   const showStartVotingButton =
     me?.isHost && room?.gameState === "PLAYING" && !room?.turnPlayerId;
 
-  if (!room || !me) return <PageContainer><div>Carregando...</div></PageContainer>;
+  if (!room || !me)
+    return (
+      <PageContainer>
+        <div>Loading...</div>
+      </PageContainer>
+    );
 
   const isMyTurn = room.turnPlayerId === me.id;
   const isImpostor = me.isImpostor;
@@ -101,7 +106,7 @@ const GameScreen = () => {
                         color: "#fff",
                       }}
                     >
-                      VOCÊ É O IMPOSTOR
+                      YOU ARE THE IMPOSTOR
                     </span>
                   </>
                 ) : (
@@ -114,7 +119,7 @@ const GameScreen = () => {
                         display: "block",
                       }}
                     >
-                      🤫 Palavra: {mySecret?.word}
+                      🤫 Word: {mySecret?.word}
                     </span>
                     <span
                       style={{
@@ -122,7 +127,7 @@ const GameScreen = () => {
                         color: "rgba(255,255,255,0.9)",
                       }}
                     >
-                      Tema: {mySecret?.theme}
+                      Theme: {mySecret?.theme}
                     </span>
                   </>
                 )}
@@ -143,7 +148,7 @@ const GameScreen = () => {
                     color: "rgba(255,255,255,0.6)",
                   }}
                 >
-                  Toque para revelar
+                  Tap to reveal
                 </span>
               </div>
             )}
@@ -151,7 +156,7 @@ const GameScreen = () => {
         </Card>
       </div>
 
-      {/* --- STATUS DO JOGO --- */}
+      {/* --- GAME STATUS --- */}
       <div style={{ textAlign: "center", marginBottom: theme.spacing.l }}>
         <h2
           style={{
@@ -160,7 +165,7 @@ const GameScreen = () => {
             color: theme.colors.text.primary,
           }}
         >
-          Rodada {room.currentRound}{" "}
+          Round {room.currentRound}{" "}
           <span style={{ color: theme.colors.text.disabled }}>
             / {room.maxRounds}
           </span>
@@ -172,19 +177,18 @@ const GameScreen = () => {
           }}
         >
           {isMyTurn
-            ? "SUA VEZ! Escreva uma dica."
-            : `Aguardando: ${room.players.find((p) => p.id === room.turnPlayerId)?.name}...`}
+            ? "YOUR TURN! Write a hint."
+            : `Waiting: ${room.players.find((p) => p.id === room.turnPlayerId)?.name}...`}
         </p>
       </div>
 
-      {/* --- GRID DE JOGADORES --- */}
+      {/* --- PLAYERS GRID --- */}
       <div
         style={{
           display: "flex",
           flexWrap: "wrap",
           justifyContent: "center",
           gap: theme.spacing.l,
-          // Adiciona padding bottom extra para o input fixo não cobrir o último player
           paddingBottom: "120px",
         }}
       >
@@ -207,14 +211,14 @@ const GameScreen = () => {
                 alignItems: "center",
               }}
             >
-              {/* BALÃO DE FALA */}
+              {/* SPEECH BALLOON */}
               {hasWords && (
                 <div
                   onMouseEnter={() => setHoveredPlayerId(player.id)}
                   onMouseLeave={() => setHoveredPlayerId(null)}
                   onClick={() =>
                     setHoveredPlayerId(isHovered ? null : player.id)
-                  } // Funciona no touch também
+                  } // Works on touch too
                   style={{
                     position: "absolute",
                     bottom: "100%",
@@ -248,7 +252,7 @@ const GameScreen = () => {
                           borderBottom: "1px solid #eee",
                         }}
                       >
-                        HISTÓRICO
+                        HISTORY
                       </span>
                       {safeWordsList.map((w, i) => (
                         <span
@@ -366,23 +370,23 @@ const GameScreen = () => {
                 style={{ marginBottom: 0, flex: 1 }} // Remove margem padrão e expande
               />
               <PrimaryButton type="submit" style={{ padding: "0 20px" }}>
-                ENVIAR
+                SEND
               </PrimaryButton>
             </form>
           </Card>
         </div>
       )}
 
-      {/* ... resto da tela do jogo ... */}
+      {/* ... rest of the game screen ... */}
 
-      {/* Se o jogo acabou as rodadas, mostra mensagem para os comuns */}
+      {/* If the game ended the rounds, show message for the common players */}
       {!room?.turnPlayerId && !me?.isHost && (
         <div style={{ textAlign: "center", marginTop: 20 }}>
-          <h3>Aguardando o anfitrião iniciar a votação... ⏳</h3>
+          <h3>Waiting for the host to start the voting... ⏳</h3>
         </div>
       )}
 
-      {/* Se for Host, mostra o botão */}
+      {/* If Host, show the button */}
       {showStartVotingButton && (
         <StartVotingButton onClick={handleStartVoting} />
       )}

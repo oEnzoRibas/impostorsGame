@@ -27,7 +27,7 @@ export const HostControls = ({
       <div
         style={{ textAlign: "center", padding: theme.spacing.l, opacity: 0.7 }}
       >
-        <p>Aguardando o anfitrião iniciar a partida...</p>
+        <p>Waiting for Host to Start The Game</p>
       </div>
     );
   }
@@ -37,7 +37,7 @@ export const HostControls = ({
       <h3
         style={{ color: theme.colors.primary, marginBottom: theme.spacing.m }}
       >
-        CONFIGURAÇÕES
+        SETTINGS
       </h3>
 
       <div
@@ -47,7 +47,7 @@ export const HostControls = ({
           gap: theme.spacing.m,
         }}
       >
-        {/* SELETOR DE TEMA (Novo Design) */}
+        {/* THEME SELECTOR (New Design) */}
         <div>
           <label
             style={{
@@ -57,7 +57,7 @@ export const HostControls = ({
               fontSize: "12px",
             }}
           >
-            TEMA SELECIONADO
+            SELECTED THEME
           </label>
           <div
             onClick={onOpenManager}
@@ -95,12 +95,12 @@ export const HostControls = ({
                 textTransform: "uppercase",
               }}
             >
-              Alterar ➜
+              Change ➜
             </span>
           </div>
         </div>
 
-        {/* INPUT DE RODADAS */}
+        {/* ROUNDS INPUT */}
         <div>
           <label
             style={{
@@ -110,7 +110,7 @@ export const HostControls = ({
               fontSize: "12px",
             }}
           >
-            RODADAS
+            ROUNDS
           </label>
           <Input
             type="number"

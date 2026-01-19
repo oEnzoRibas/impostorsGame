@@ -72,7 +72,6 @@ export const PageContainer = ({ children }: { children: ReactNode }) => {
             to { opacity: 1; transform: translateY(0); }
           }
         `}</style>
-
         {children}
       </div>
     </div>

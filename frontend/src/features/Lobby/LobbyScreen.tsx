@@ -6,7 +6,7 @@ import { ThemeManager } from "./components/ThemeManager/ThemeManager";
 import { RoomHeader } from "./components/RoomHeader/RoomHeader";
 import { PlayerList } from "./components/PlayerList/PlayerList";
 import { HostControls } from "./components/HostControls/HostControls";
-import Loading from "../../components/Page/Loading";
+import Loading from "../../components/Loading/Loading";
 
 const LobbyScreen = () => {
   const logic = useLobbyLogic();
@@ -54,7 +54,7 @@ const LobbyScreen = () => {
             background: "transparent",
           }}
         >
-          SAIR DA SALA
+          QUIT ROOM
         </PrimaryButton>
       </div>
     </PageContainer>

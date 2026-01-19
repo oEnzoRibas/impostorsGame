@@ -8,10 +8,16 @@ export const RoomHeader = ({ roomId }: Props) => {
 
   return (
     <div style={{ textAlign: "center", marginBottom: theme.spacing.m }}>
-      <p style={{ color: theme.colors.text.secondary, fontSize: theme.fontSize.s, letterSpacing: "1px" }}>
+      <p
+        style={{
+          color: theme.colors.text.secondary,
+          fontSize: theme.fontSize.s,
+          letterSpacing: "1px",
+        }}
+      >
         SALA DE ESPERA
       </p>
-      <div 
+      <div
         onClick={() => copy(roomId)}
         style={{
           background: "rgba(255,255,255,0.05)",
@@ -19,13 +25,22 @@ export const RoomHeader = ({ roomId }: Props) => {
           borderRadius: theme.borderRadius.l,
           padding: `${theme.spacing.s} ${theme.spacing.l}`,
           cursor: "pointer",
-          display: "inline-block"
+          display: "inline-block",
         }}
       >
-        <h1 style={{ margin: 0, fontSize: "3rem", color: theme.colors.primary, fontFamily: "monospace" }}>
+        <h1
+          style={{
+            margin: 0,
+            fontSize: "3rem",
+            color: theme.colors.primary,
+            fontFamily: "monospace",
+          }}
+        >
           {roomId}
         </h1>
-        <span style={{ fontSize: "10px", color: theme.colors.text.secondary }}>CLIQUE PARA COPIAR</span>
+        <span style={{ fontSize: "10px", color: theme.colors.text.secondary }}>
+          CLICK TO COPY
+        </span>
       </div>
     </div>
   );

@@ -32,7 +32,7 @@ export const ThemeManager = ({ onClose, onSelectTheme }: Props) => {
             color: theme.colors.text.primary,
           }}
         >
-          {logic.view === "LIST" ? "SELECIONAR TEMA 🎨" : "EDITOR DE TEMA ✏️"}
+          {logic.view === "LIST" ? "SELECT THEME" : "THEME EDITOR ✏️"}
         </h2>
 
         <button

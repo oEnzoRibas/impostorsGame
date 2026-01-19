@@ -61,3 +61,14 @@ button,
 input {
   font-family: inherit;
 }
+
+a {
+  color: #ffffff;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}

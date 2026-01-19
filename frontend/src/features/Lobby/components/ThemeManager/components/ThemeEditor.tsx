@@ -23,12 +23,12 @@ export const ThemeEditor = ({ initialData, onSave, onCancel }: Props) => {
   }, [initialData]);
 
   const handleSave = () => {
-    if (!name.trim()) return toast.error("Nome obrigatório");
+    if (!name.trim()) return toast.error("Name is required");
     const wordList = words
       .split(/[\n,]+/)
       .map((w) => w.trim())
       .filter((w) => w);
-    if (wordList.length < 5) return toast.error("Mínimo de 5 palavras");
+    if (wordList.length < 5) return toast.error("Minimum of 5 words");
 
     onSave(name.toUpperCase(), wordList);
   };
@@ -62,12 +62,12 @@ export const ThemeEditor = ({ initialData, onSave, onCancel }: Props) => {
           ← Go Back
         </button>
         <h3 style={{ margin: 0, color: theme.colors.primary }}>
-          {initialData ? "EDITAR TEMA" : "NOVO TEMA"}
+          {initialData ? "EDIT THEME" : "NEW THEME"}
         </h3>
       </div>
 
       <Input
-        placeholder="NOME DO TEMA"
+        placeholder="THEME NAME"
         value={name}
         onChange={(e) => setName(e.target.value)}
         style={{ marginBottom: theme.spacing.m, textTransform: "uppercase" }}
@@ -76,7 +76,7 @@ export const ThemeEditor = ({ initialData, onSave, onCancel }: Props) => {
       <textarea
         value={words}
         onChange={(e) => setWords(e.target.value)}
-        placeholder="Digite palavras separadas por ENTER..."
+        placeholder="Type words separated by ENTER... or COMMAS..."
         style={{
           flex: 1,
           background: "#151515",

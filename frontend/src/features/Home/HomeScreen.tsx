@@ -57,11 +57,11 @@ const HomeScreen = () => {
           <span style={{ color: theme.colors.text.primary }}>GAME</span> 🕵️
         </h1>
         <p style={{ color: theme.colors.text.secondary }}>
-          Identifique o impostor.
+          Identify the impostor among your friends!
         </p>
       </div>
 
-      {/* Cartão Central de Ações */}
+      {/* Central Action Card */}
       <Card style={{ maxWidth: "400px", width: "100%", margin: "0 auto" }}>
         {/* Input de Nome (Global) */}
         <div style={{ marginBottom: theme.spacing.l }}>
@@ -73,7 +73,7 @@ const HomeScreen = () => {
               color: theme.colors.text.secondary,
             }}
           >
-            SEU NICKNAME
+            YOUR NICKNAME
           </label>
           <Input
             type="text"
@@ -90,7 +90,7 @@ const HomeScreen = () => {
           onClick={handleCreateRoom}
           style={{ marginBottom: theme.spacing.l }}
         >
-          CRIAR NOVA SALA 🎮
+          CREATE NEW ROOM 🎮
         </PrimaryButton>
 
         {/* Divisor Visual */}
@@ -106,7 +106,7 @@ const HomeScreen = () => {
             style={{ flex: 1, height: "1px", background: theme.colors.border }}
           ></div>
           <span style={{ padding: "0 10px", fontSize: theme.fontSize.s }}>
-            OU ENTRE EM UMA
+            JOIN ROOM
           </span>
           <div
             style={{ flex: 1, height: "1px", background: theme.colors.border }}
@@ -117,7 +117,7 @@ const HomeScreen = () => {
         <div style={{ display: "flex", gap: theme.spacing.s }}>
           <Input
             type="text"
-            placeholder="CÓDIGO (ex: XJ92)"
+            placeholder="CODE (e.g.,XJ92)"
             value={roomIdInput}
             onChange={(e) => setRoomIdInput(e.target.value)}
             maxLength={4}
@@ -127,16 +127,16 @@ const HomeScreen = () => {
               textAlign: "center",
               letterSpacing: "2px",
               fontWeight: "bold",
-              width: "140px", // Fixo para caber o código
+              width: "200px", // Fixed to fit the code
             }}
           />
           <PrimaryButton variant="secondary" fullWidth onClick={handleJoinRoom}>
-            ENTRAR 🚀
+            JOIN 🚀
           </PrimaryButton>
         </div>
       </Card>
 
-      {/* Rodapé ou Debug */}
+      {/* Footer or Debug */}
       <p
         style={{
           textAlign: "center",
@@ -145,7 +145,24 @@ const HomeScreen = () => {
           fontSize: theme.fontSize.s,
         }}
       >
-        Status do Sistema: {gameState}
+        <br />
+        System Status: {gameState}
+      </p>
+
+      {/* Copyright */}
+      <p
+        style={{
+          textAlign: "center",
+          marginTop: theme.spacing.l,
+          color: theme.colors.text.disabled,
+          fontSize: theme.fontSize.m,
+        }}
+      >
+        © 2026 Impostors Game. All rights reserved. Made with ❤️ by{" "}
+        <a href="https://github.com/oenzoribas" color="red">
+          oEnzoRibas
+        </a>
+        .
       </p>
     </PageContainer>
   );
