@@ -21,7 +21,7 @@ const Loading = () => {
             letterSpacing: "2px",
           }}
         >
-          CONECTANDO À NAVE...
+          Connecting to the SpaceShip...
         </p>
         <style>{`@keyframes spin { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }`}</style>
       </div>

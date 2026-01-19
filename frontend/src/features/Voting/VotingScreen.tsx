@@ -14,7 +14,7 @@ const VotingScreen = () => {
   if (!room || !me)
     return (
       <PageContainer>
-        <div>Carregando...</div>
+        <div>Loading...</div>
       </PageContainer>
     );
 

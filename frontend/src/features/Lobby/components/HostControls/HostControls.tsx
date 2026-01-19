@@ -122,7 +122,7 @@ export const HostControls = ({
         </div>
 
         <PrimaryButton onClick={onStart} disabled={!canStart} fullWidth>
-          {!canStart ? "AGUARDANDO JOGADORES..." : "INICIAR JOGO 🚀"}
+          {!canStart ? "WAITING FOR PLAYERS..." : "START GAME 🚀"}
         </PrimaryButton>
       </div>
     </Card>

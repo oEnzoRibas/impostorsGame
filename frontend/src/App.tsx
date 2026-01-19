@@ -15,6 +15,7 @@ import ResultsScreen from "./features/Results/ResultsScreen";
 import { NotFoundScreen } from "./features/Errors/NotFoundScreen";
 import { SomeThingUnexpected } from "./features/Errors/SomeThingUnexpected";
 import { ErrorBoundary } from "react-error-boundary";
+import Loading from "./components/Loading/Loading";
 
 // Socket Singleton
 export const socket = io(
@@ -66,10 +67,12 @@ export default function App() {
           }}
         >
           <Routes>
-            {/* Rota Principal: O Gerenciador de Estados do Jogo */}
             <Route path="/" element={<GameFlowManager />} />
 
-            {/* Rota Wildcard (*): Captura qualquer URL errada e mostra o 404 */}
+            <Route path="/Error500" element={<SomeThingUnexpected />} />
+
+            <Route path="Loading" element={<Loading></Loading>}></Route>
+
             <Route path="*" element={<NotFoundScreen />} />
           </Routes>
         </ErrorBoundary>

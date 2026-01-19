@@ -13,6 +13,7 @@ import StartVotingButton from "./components/VotingSection.tsx/StartVotingButton.
 import SendWordInput from "./components/SendWordInput.tsx/SendWordInput";
 import WordsBalloon from "./components/Words/WordsBalloon";
 import Avatar from "./components/Avatar/Avatar";
+import Loading from "../../components/Loading/Loading";
 
 const GameScreen = () => {
   const { room, me, mySecret } = useGame();
@@ -24,11 +25,7 @@ const GameScreen = () => {
     me?.isHost && room?.gameState === "PLAYING" && !room?.turnPlayerId;
 
   if (!room || !me)
-    return (
-      <PageContainer>
-        <div>Loading...</div>
-      </PageContainer>
-    );
+    return <Loading />;
 
   const isMyTurn = room.turnPlayerId === me.id;
   const isImpostor = me.isImpostor;

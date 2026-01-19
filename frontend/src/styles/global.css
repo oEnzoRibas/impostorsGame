@@ -1,44 +1,36 @@
-/* 1. RESET BÁSICO E CRUCIAL */
 :root {
   font-family: "Inter", system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  /* Suavização de fonte para ficar bonito no MacOS/iOS */
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Garante que padding e border não aumentem o tamanho dos elementos */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
-
-/* 2. CONFIGURAÇÃO DE TELA CHEIA (Resolve o problema do canto esquerdo) */
 html,
 body {
   margin: 0;
   padding: 0;
-  width: 100vw; /* Largura total da viewport */
-  height: 100vh; /* Altura total da viewport */
-  background-color: #121212; /* Cor de fundo base (igual ao seu theme.ts) */
+  width: 100vw;
+  height: 100vh;
+  background-color: #121212; 
   color: #ffffff;
-  overflow-x: hidden; /* Evita scroll lateral acidental */
+  overflow-x: hidden;
 }
 
-/* 3. CONFIGURAÇÃO DO ROOT DO REACT */
 #root {
   width: 100%;
   height: 100%;
-  isolation: isolate; /* Cria um novo contexto de empilhamento (boa prática) */
-  /* Removemos qualquer display flex ou grid aqui para deixar o PageContainer controlar o layout */
+  isolation: isolate; 
 }
 
-/* 4. ESTILIZAÇÃO DA BARRA DE ROLAGEM (Scrollbar) - Opcional, mas fica pro */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -56,7 +48,6 @@ body {
   background: #52525b;
 }
 
-/* 5. REMOVE ESTILOS PADRÕES FEIOS DE BOTÕES E INPUTS */
 button,
 input {
   font-family: inherit;
