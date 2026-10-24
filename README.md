@@ -1,5 +1,5 @@
 # 🕵️‍♂️ The Impostor Game
-
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/oEnzoRibas/impostorsGame)
 ## A real-time multiplayer social deduction game where players must find out who doesn't know the secret word.
 
 # 📖 About the Project
